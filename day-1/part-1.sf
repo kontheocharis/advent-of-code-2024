@@ -1,0 +1,103 @@
+-- UTILS
+
+#unfold
+def return : [A : Type] -> A -> IO A {
+  io-return
+}
+
+#unfold
+def bind : [A B : Type] -> IO A -> (A -> IO B) -> IO B {
+  io-bind
+}
+
+def lines : String -> List String {
+  \s => string-split s "\n"
+}
+
+def words : String -> List String {
+  \s => filter (\x => not (string-eq x "")) (string-split s " ")
+}
+
+def first-two : [A : Type] -> List A -> Maybe (A * A) {
+  \case {
+    [] => nothing,
+    [x, ..xs] => case xs {
+      [] => nothing,
+      [y, .._] => just (x, y)
+    }
+  }
+}
+
+def for : [A B : Type] -> List A -> (A -> IO B) -> IO (List B) {
+  \l f => case l {
+    [] => return [],
+    [x, ..xs] => {
+      let y <- f x;
+      let ys <- for xs f;
+      return [y, ..ys]
+    }
+  }
+}
+
+def parse-natM : String -> IO Nat {
+  \s => case parse-nat s {
+    nothing => throw (string-concat "Invalid input: " s),
+    just n => return n
+  }
+}
+
+def zip : [A B : Type] -> List A -> List B -> List (A * B) {
+  \l r => case l {
+    [] => [],
+    [x, ..xs] => case r {
+      [] => [],
+      [y, ..ys] => [(x, y), ..zip xs ys]
+    }
+  }
+}
+
+-- PROGRAM
+
+def list-distance : List Nat -> List Nat -> Nat {
+  \l r => {
+    let lr = zip l r;
+    fold 0 (\ls acc => {
+      let (x, y) : Nat * Nat = ls;
+      if lt x y {
+        add acc (sub y x)
+      } else {
+        add acc (sub x y)
+      }
+    }) lr
+  }
+}
+
+def main : IO () {
+  let f <- input;
+
+  let left-list <- cell [];
+  let right-list <- cell [];
+
+  let x <- for (lines f) (\line => {
+    case first-two (words line) {
+      nothing => return (),
+      just m => {
+        let (a, b) = m;
+        let a' <- parse-natM a;
+        let b' <- parse-natM b;
+        do modify-cell left-list (\l => [a', ..l]);
+        do modify-cell right-list (\r => [b', ..r]);
+        return ()
+      }
+    }
+  });
+
+  let l <- get-cell left-list;
+  let r <- get-cell right-list;
+
+  let res = list-distance (sort nat-cmp l) (sort nat-cmp r);
+
+  do print (show-nat res);
+
+  return ()
+}

@@ -67,21 +67,37 @@ def unzip : [A B : Type] -> List (A * B) -> (List A * List B) {
   }
 }
 
+def sum : List Nat -> Nat {
+  fold 0 (\x acc => add x acc)
+}
+
+def distance : Nat -> Nat -> Nat {
+  \x y => {
+    if lt x y {
+      sub y x
+    } else {
+      sub x y
+    }
+  }
+}
+
+def zip-with : [A B C : Type] -> (A -> B -> C) -> List A -> List B -> List C {
+  \f l r => {
+    map (\x => {
+      let (a, b) : A * B = x;
+      f a b
+    }) (zip l r)
+  }
+}
+
 -- PROGRAM
 
 def similarity-score : List Nat -> List Nat -> Nat {
-  \l r => {
-    fold 0 (\left-el similarity => {
-      let occurrences = fold 0 (\right-el acc => {
-        if nat-eq left-el right-el {
-          add acc left-el
-        } else {
-          acc
-        }
-      }) r;
-      add similarity occurrences
-    }) l
-  }
+  \l r => sum (map (\x => mul x (length (filter (nat-eq x) r))) l)
+}
+
+def list-distance : List Nat -> List Nat -> Nat {
+  \l r => sum (zip-with (distance) (sort nat-cmp l) (sort nat-cmp r))
 }
 
 def main : IO () {
@@ -100,7 +116,14 @@ def main : IO () {
   });
 
   let (l, r) = unzip numbers;
-  let result = similarity-score l r;
 
-  print (show-nat result)
+  do print "Part 1:";
+  let part1 = list-distance l r;
+  do print (show-nat part1);
+
+  do print "Part 2:";
+  let part2 = similarity-score l r;
+  do print (show-nat part2);
+
+  return ()
 }

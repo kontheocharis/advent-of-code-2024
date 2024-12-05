@@ -363,25 +363,38 @@ var unzip = (x20162) => (js_array_switch_l)((_3) => [js_empty_array, js_empty_ar
     })())((subject6)[0])((subject6)[1]);
   })();
 })())(x20162);
-var similarity_score = (l0) => (r1) => (js_reduce)((acc2) => (x3) => (() => {
-  var occurrences4 = (js_reduce)((acc4) => (x5) => (js_if_dep)((js_eqq)(x3)(x5))((_6) => (js_uint_plus)(acc4)(x3))((_6) => acc4))(0)(r1);
-  return (js_uint_plus)(acc2)(occurrences4);
-})())(0)(l0);
-var main = (io_bind)((io_bind)((js_read_file)("/dev/stdin"))((x0) => (io_return)(x0)))((x21640) => (() => {
-  var txt1 = x21640;
+var sum = (xs0) => (js_reduce)((acc1) => (x2) => (js_uint_plus)(x2)(acc1))(0)(xs0);
+var distance = (x0) => (y1) => (js_if_dep)((js_lt)(x0)(y1))((_2) => (js_uint_minus)(y1)(x0))((_2) => (js_uint_minus)(x0)(y1));
+var zip_with = (f3) => (l4) => (r5) => (js_map)((zip)(l4)(r5))((x10216) => (() => {
+  var subject7 = x10216;
+  return ((a7) => (x10238) => (() => {
+    var x21449 = a7;
+    return (() => {
+      var subject10 = x21449;
+      return ((a10) => (b11) => (f3)(a10)(b11))((subject10)[0])((subject10)[1]);
+    })();
+  })())((subject7)[0])((subject7)[1]);
+})());
+var similarity_score = (l0) => (r1) => (sum)((js_map)(l0)((x10212) => (() => {
+  var subject3 = x10212;
+  return ((a3) => (x10234) => (js_uint_times)(a3)((js_length)((js_filter)((b_p_5) => (js_eqq)(a3)(b_p_5))(r1))))((subject3)[0])((subject3)[1]);
+})()));
+var list_distance = (l0) => (r1) => (sum)((zip_with)(distance)((sort)(nat_cmp)(l0))((sort)(nat_cmp)(r1)));
+var main = (io_bind)((io_bind)((js_read_file)("/dev/stdin"))((x0) => (io_return)(x0)))((x22140) => (() => {
+  var txt1 = x22140;
   return (io_bind)((forM)((lines)(txt1))((line2) => (() => {
     var subject3 = (first_two)((words)(line2));
     return (() => {
       switch ((subject3)[0]) {
         case "nothing": return (THROW)("Invalid input");
         case "just": return ((ws3) => (() => {
-          var x21784 = ws3;
+          var x22284 = ws3;
           return (() => {
-            var subject5 = x21784;
-            return ((a5) => (b6) => (io_bind)((parse_natM)(a5))((x21927) => (() => {
-              var a_p_8 = x21927;
-              return (io_bind)((parse_natM)(b6))((x22059) => (() => {
-                var b_p_10 = x22059;
+            var subject5 = x22284;
+            return ((a5) => (b6) => (io_bind)((parse_natM)(a5))((x22427) => (() => {
+              var a_p_8 = x22427;
+              return (io_bind)((parse_natM)(b6))((x22559) => (() => {
+                var b_p_10 = x22559;
                 return (io_return)([a_p_8, b_p_10]);
               })());
             })()))((subject5)[0])((subject5)[1]);
@@ -389,15 +402,26 @@ var main = (io_bind)((io_bind)((js_read_file)("/dev/stdin"))((x0) => (io_return)
         })())((subject3)[1]);
       }
     })();
-  })()))((x21672) => (() => {
-    var numbers3 = x21672;
-    var x22494 = (unzip)(numbers3);
+  })()))((x22172) => (() => {
+    var numbers3 = x22172;
+    var x22994 = (unzip)(numbers3);
     return (() => {
-      var subject5 = x22494;
-      return ((l5) => (r6) => (() => {
-        var result7 = (similarity_score)(l5)(r6);
-        return (js_console_log)((show_nat)(result7));
-      })())((subject5)[0])((subject5)[1]);
+      var subject5 = x22994;
+      return ((l5) => (r6) => (io_bind)((js_console_log)("Part 1:"))((x23107) => (() => {
+        var _8 = x23107;
+        var part19 = (list_distance)(l5)(r6);
+        return (io_bind)((js_console_log)((show_nat)(part19)))((x234210) => (() => {
+          var _11 = x234210;
+          return (io_bind)((js_console_log)("Part 2:"))((x235612) => (() => {
+            var _13 = x235612;
+            var part214 = (similarity_score)(l5)(r6);
+            return (io_bind)((js_console_log)((show_nat)(part214)))((x237915) => (() => {
+              var _16 = x237915;
+              return (io_return)([]);
+            })());
+          })());
+        })());
+      })()))((subject5)[0])((subject5)[1]);
     })();
   })());
 })());

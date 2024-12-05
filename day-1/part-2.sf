@@ -69,19 +69,18 @@ def unzip : [A B : Type] -> List (A * B) -> (List A * List B) {
 
 -- PROGRAM
 
-def list-distance : List Nat -> List Nat -> Nat {
+def similarity-score : List Nat -> List Nat -> Nat {
   \l r => {
-    let l' = sort nat-cmp l;
-    let r' = sort nat-cmp r;
-
-    fold 0 (\ls acc => {
-      let (x, y) : Nat * Nat = ls;
-      if lt x y {
-        add acc (sub y x)
-      } else {
-        add acc (sub x y)
-      }
-    }) (zip l' r')
+    fold 0 (\left-el similarity => {
+      let occurrences = fold 0 (\right-el acc => {
+        if nat-eq left-el right-el {
+          add acc left-el
+        } else {
+          acc
+        }
+      }) r;
+      add similarity occurrences
+    }) l
   }
 }
 
@@ -101,7 +100,7 @@ def main : IO () {
   });
 
   let (l, r) = unzip numbers;
-  let result = list-distance l r;
+  let result = similarity-score l r;
 
   print (show-nat result)
 }

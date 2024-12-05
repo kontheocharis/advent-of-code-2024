@@ -363,32 +363,25 @@ var unzip = (x20162) => (js_array_switch_l)((_3) => [js_empty_array, js_empty_ar
     })())((subject6)[0])((subject6)[1]);
   })();
 })())(x20162);
-var list_distance = (l0) => (r1) => (() => {
-  var l_p_2 = (sort)(nat_cmp)(l0);
-  var r_p_3 = (sort)(nat_cmp)(r1);
-  return (js_reduce)((acc4) => (x5) => (() => {
-    var x21566 = x5;
-    return (() => {
-      var subject7 = x21566;
-      return ((x7) => (y8) => (js_if_dep)((js_lt)(x7)(y8))((_9) => (js_uint_plus)(acc4)((js_uint_minus)(y8)(x7)))((_9) => (js_uint_plus)(acc4)((js_uint_minus)(x7)(y8))))((subject7)[0])((subject7)[1]);
-    })();
-  })())(0)((zip)(l_p_2)(r_p_3));
-})();
-var main = (io_bind)((io_bind)((js_read_file)("/dev/stdin"))((x0) => (io_return)(x0)))((x21820) => (() => {
-  var txt1 = x21820;
+var similarity_score = (l0) => (r1) => (js_reduce)((acc2) => (x3) => (() => {
+  var occurrences4 = (js_reduce)((acc4) => (x5) => (js_if_dep)((js_eqq)(x3)(x5))((_6) => (js_uint_plus)(acc4)(x3))((_6) => acc4))(0)(r1);
+  return (js_uint_plus)(acc2)(occurrences4);
+})())(0)(l0);
+var main = (io_bind)((io_bind)((js_read_file)("/dev/stdin"))((x0) => (io_return)(x0)))((x21640) => (() => {
+  var txt1 = x21640;
   return (io_bind)((forM)((lines)(txt1))((line2) => (() => {
     var subject3 = (first_two)((words)(line2));
     return (() => {
       switch ((subject3)[0]) {
         case "nothing": return (THROW)("Invalid input");
         case "just": return ((ws3) => (() => {
-          var x21964 = ws3;
+          var x21784 = ws3;
           return (() => {
-            var subject5 = x21964;
-            return ((a5) => (b6) => (io_bind)((parse_natM)(a5))((x22107) => (() => {
-              var a_p_8 = x22107;
-              return (io_bind)((parse_natM)(b6))((x22239) => (() => {
-                var b_p_10 = x22239;
+            var subject5 = x21784;
+            return ((a5) => (b6) => (io_bind)((parse_natM)(a5))((x21927) => (() => {
+              var a_p_8 = x21927;
+              return (io_bind)((parse_natM)(b6))((x22059) => (() => {
+                var b_p_10 = x22059;
                 return (io_return)([a_p_8, b_p_10]);
               })());
             })()))((subject5)[0])((subject5)[1]);
@@ -396,13 +389,13 @@ var main = (io_bind)((io_bind)((js_read_file)("/dev/stdin"))((x0) => (io_return)
         })())((subject3)[1]);
       }
     })();
-  })()))((x21852) => (() => {
-    var numbers3 = x21852;
-    var x22674 = (unzip)(numbers3);
+  })()))((x21672) => (() => {
+    var numbers3 = x21672;
+    var x22494 = (unzip)(numbers3);
     return (() => {
-      var subject5 = x22674;
+      var subject5 = x22494;
       return ((l5) => (r6) => (() => {
-        var result7 = (list_distance)(l5)(r6);
+        var result7 = (similarity_score)(l5)(r6);
         return (js_console_log)((show_nat)(result7));
       })())((subject5)[0])((subject5)[1]);
     })();

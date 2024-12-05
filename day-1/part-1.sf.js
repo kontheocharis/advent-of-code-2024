@@ -333,13 +333,13 @@ var reprs_subst_p_ = (r2) => (b3) => (() => {
 })();
 var THROW = (s1) => (js_panic)(s1);
 var modify_cell = (cell1) => (f2) => (io_bind)((get_cell)(cell1))((x3) => (set_cell)(cell1)((f2)(x3)));
-var lines = (s0) => (string_split)(s0)("\n");
+var lines = (s0) => (js_filter)((b_p_1) => (js_not)((string_eq)(b_p_1)("")))((string_split)(s0)("\n"));
 var words = (s0) => (js_filter)((b_p_1) => (js_not)((string_eq)(b_p_1)("")))((string_split)(s0)(" "));
-var first_two = (x17951) => (js_array_switch_l)((_2) => ["nothing"])((a2) => (xs3) => (js_array_switch_l)((_4) => ["nothing"])((a4) => (xs5) => ["just", [a2, a4]])(xs3))(x17951);
-var FOR = (l2) => (f3) => (js_array_switch_l)((_4) => (io_return)(js_empty_array))((a4) => (xs5) => (io_bind)((f3)(a4))((x18566) => (() => {
-  var y7 = x18566;
-  return (io_bind)((FOR)(xs5)(f3))((x18718) => (() => {
-    var ys9 = x18718;
+var first_two = (x17961) => (js_array_switch_l)((_2) => ["nothing"])((a2) => (xs3) => (js_array_switch_l)((_4) => ["nothing"])((a4) => (xs5) => ["just", [a2, a4]])(xs3))(x17961);
+var forM = (l2) => (f3) => (js_array_switch_l)((_4) => (io_return)(js_empty_array))((a4) => (xs5) => (io_bind)((f3)(a4))((x18576) => (() => {
+  var y7 = x18576;
+  return (io_bind)((forM)(xs5)(f3))((x18728) => (() => {
+    var ys9 = x18728;
     return (io_return)((js_array_extend_l)(y7)(ys9));
   })());
 })()))(l2);
@@ -353,63 +353,58 @@ var parse_natM = (s0) => (() => {
   })();
 })();
 var zip = (l2) => (r3) => (js_array_switch_l)((_4) => js_empty_array)((a4) => (xs5) => (js_array_switch_l)((_6) => js_empty_array)((a6) => (xs7) => (js_array_extend_l)([a4, a6])((zip)(xs5)(xs7)))(r3))(l2);
-var list_distance = (l0) => (r1) => (() => {
-  var lr2 = (zip)(l0)(r1);
-  return (js_reduce)((acc3) => (x4) => (() => {
-    var x20245 = x4;
+var unzip = (x20162) => (js_array_switch_l)((_3) => [js_empty_array, js_empty_array])((a3) => (xs4) => (() => {
+  var x20385 = a3;
+  return (() => {
+    var subject6 = x20385;
+    return ((x6) => (y7) => (() => {
+      var x20588 = (unzip)(xs4);
+      return (() => {
+        var subject9 = x20588;
+        return ((l9) => (r10) => [(js_array_extend_l)(x6)(l9), (js_array_extend_l)(y7)(r10)])((subject9)[0])((subject9)[1]);
+      })();
+    })())((subject6)[0])((subject6)[1]);
+  })();
+})())(x20162);
+var list_distance = (l0) => (r1) => (js_reduce)((acc2) => (x3) => (() => {
+  var x21424 = x3;
+  return (() => {
+    var subject5 = x21424;
+    return ((x5) => (y6) => (js_if_dep)((js_lt)(x5)(y6))((_7) => (js_uint_plus)(acc2)((js_uint_minus)(y6)(x5)))((_7) => (js_uint_plus)(acc2)((js_uint_minus)(x5)(y6))))((subject5)[0])((subject5)[1]);
+  })();
+})())(0)((zip)(l0)(r1));
+var main = (io_bind)((io_bind)((js_read_file)("/dev/stdin"))((x0) => (io_return)(x0)))((x21680) => (() => {
+  var txt1 = x21680;
+  return (io_bind)((forM)((lines)(txt1))((line2) => (() => {
+    var subject3 = (first_two)((words)(line2));
     return (() => {
-      var subject6 = x20245;
-      return ((x6) => (y7) => (js_if_dep)((js_lt)(x6)(y7))((_8) => (js_uint_plus)(acc3)((js_uint_minus)(y7)(x6)))((_8) => (js_uint_plus)(acc3)((js_uint_minus)(x6)(y7))))((subject6)[0])((subject6)[1]);
+      switch ((subject3)[0]) {
+        case "nothing": return (THROW)("Invalid input");
+        case "just": return ((ws3) => (() => {
+          var x21824 = ws3;
+          return (() => {
+            var subject5 = x21824;
+            return ((a5) => (b6) => (io_bind)((parse_natM)(a5))((x21967) => (() => {
+              var a_p_8 = x21967;
+              return (io_bind)((parse_natM)(b6))((x22099) => (() => {
+                var b_p_10 = x22099;
+                return (io_return)([a_p_8, b_p_10]);
+              })());
+            })()))((subject5)[0])((subject5)[1]);
+          })();
+        })())((subject3)[1]);
+      }
     })();
-  })())(0)(lr2);
-})();
-var main = (io_bind)((io_bind)((js_read_file)("/dev/stdin"))((x0) => (io_return)(x0)))((x20460) => (() => {
-  var f1 = x20460;
-  return (io_bind)((cell)(js_empty_array))((x20492) => (() => {
-    var left_list3 = x20492;
-    return (io_bind)((cell)(js_empty_array))((x20554) => (() => {
-      var right_list5 = x20554;
-      return (io_bind)((FOR)((lines)(f1))((line6) => (() => {
-        var subject7 = (first_two)((words)(line6));
-        return (() => {
-          switch ((subject7)[0]) {
-            case "nothing": return (io_return)([]);
-            case "just": return ((m7) => (() => {
-              var x20888 = m7;
-              return (() => {
-                var subject9 = x20888;
-                return ((a9) => (b10) => (io_bind)((parse_natM)(a9))((x210811) => (() => {
-                  var a_p_12 = x210811;
-                  return (io_bind)((parse_natM)(b10))((x212513) => (() => {
-                    var b_p_14 = x212513;
-                    return (io_bind)((modify_cell)(left_list3)((l15) => (js_array_extend_l)(a_p_12)(l15)))((x214415) => (() => {
-                      var _16 = x214415;
-                      return (io_bind)((modify_cell)(right_list5)((r17) => (js_array_extend_l)(b_p_14)(r17)))((x218517) => (() => {
-                        var _18 = x218517;
-                        return (io_return)([]);
-                      })());
-                    })());
-                  })());
-                })()))((subject9)[0])((subject9)[1]);
-              })();
-            })())((subject7)[1]);
-          }
-        })();
-      })()))((x20646) => (() => {
-        var x7 = x20646;
-        return (io_bind)((get_cell)(left_list3))((x22848) => (() => {
-          var l9 = x22848;
-          return (io_bind)((get_cell)(right_list5))((x229910) => (() => {
-            var r11 = x229910;
-            var res12 = (list_distance)((sort)(nat_cmp)(l9))((sort)(nat_cmp)(r11));
-            return (io_bind)((js_console_log)((show_nat)(res12)))((x234013) => (() => {
-              var _14 = x234013;
-              return (io_return)([]);
-            })());
-          })());
-        })());
-      })());
-    })());
+  })()))((x21712) => (() => {
+    var numbers3 = x21712;
+    var x22534 = (unzip)(numbers3);
+    return (() => {
+      var subject5 = x22534;
+      return ((l5) => (r6) => (() => {
+        var result7 = (list_distance)((sort)(nat_cmp)(l5))((sort)(nat_cmp)(r6));
+        return (js_console_log)((show_nat)(result7));
+      })())((subject5)[0])((subject5)[1]);
+    })();
   })());
 })());
 (main)((x) => x)

@@ -11,7 +11,7 @@ def bind : [A B : Type] -> IO A -> (A -> IO B) -> IO B {
 }
 
 def lines : String -> List String {
-  \s => string-split s "\n"
+  \s => filter (\x => not (string-eq x "")) (string-split s "\n")
 }
 
 def words : String -> List String {
@@ -28,12 +28,12 @@ def first-two : [A : Type] -> List A -> Maybe (A * A) {
   }
 }
 
-def for : [A B : Type] -> List A -> (A -> IO B) -> IO (List B) {
+def forM : [A B : Type] -> List A -> (A -> IO B) -> IO (List B) {
   \l f => case l {
     [] => return [],
     [x, ..xs] => {
       let y <- f x;
-      let ys <- for xs f;
+      let ys <- forM xs f;
       return [y, ..ys]
     }
   }
@@ -56,11 +56,21 @@ def zip : [A B : Type] -> List A -> List B -> List (A * B) {
   }
 }
 
+def unzip : [A B : Type] -> List (A * B) -> (List A * List B) {
+  \case {
+    [] => ([], []),
+    [m, ..xs] => {
+      let (x, y) = m;
+      let (l, r) = unzip xs;
+      ([x, ..l], [y, ..r])
+    }
+  }
+}
+
 -- PROGRAM
 
 def list-distance : List Nat -> List Nat -> Nat {
   \l r => {
-    let lr = zip l r;
     fold 0 (\ls acc => {
       let (x, y) : Nat * Nat = ls;
       if lt x y {
@@ -68,36 +78,27 @@ def list-distance : List Nat -> List Nat -> Nat {
       } else {
         add acc (sub x y)
       }
-    }) lr
+    }) (zip l r)
   }
 }
 
 def main : IO () {
-  let f <- input;
+  let txt <- input;
 
-  let left-list <- cell [];
-  let right-list <- cell [];
-
-  let x <- for (lines f) (\line => {
+  let numbers <- forM (lines txt) (\line => {
     case first-two (words line) {
-      nothing => return (),
-      just m => {
-        let (a, b) = m;
+      nothing => throw "Invalid input",
+      just ws => {
+        let (a, b) = ws;
         let a' <- parse-natM a;
         let b' <- parse-natM b;
-        do modify-cell left-list (\l => [a', ..l]);
-        do modify-cell right-list (\r => [b', ..r]);
-        return ()
+        return (a', b')
       }
     }
   });
 
-  let l <- get-cell left-list;
-  let r <- get-cell right-list;
+  let (l, r) = unzip numbers;
+  let result = list-distance (sort nat-cmp l) (sort nat-cmp r);
 
-  let res = list-distance (sort nat-cmp l) (sort nat-cmp r);
-
-  do print (show-nat res);
-
-  return ()
+  print (show-nat result)
 }
